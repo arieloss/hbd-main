@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joyeux Anniversaire !</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            overflow-x: hidden;
+            transition: all 1s ease;
+            position: relative;
+        }
+
+        body.lit {
+            background: linear-gradient(135deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+        }
+
+        body.fullscreen {
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 900px;
+            width: 100%;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin: 20px 0;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            animation: bounce 2s infinite;
+        }
+
+        .step-button {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            border: none;
+            padding: 15px 30px;
+            margin: 10px;
+            border-radius: 50px;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: none;
+        }
+
+        .step-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.3);
+        }
+
+        .step-button.visible {
+            display: inline-block;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .step-button.hidden {
+            display: none !important;
+        }
+
+        .lights {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .lights.active {
+            opacity: 1;
+        }
+
+        .light {
+            position: absolute;
+            width: 20px;
+            height: 40px;
+            border-radius: 10px;
+            animation: twinkle 2s infinite alternate;
+        }
+
+        .decorations {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .decorations.active {
+            opacity: 1;
+        }
+
+        .streamer {
+            position: absolute;
+            width: 100%;
+            height: 20px;
+            background: repeating-linear-gradient(
+                90deg,
+                #ff6b6b 0px,
+                #feca57 20px,
+                #48dbfb 40px,
+                #ff9ff3 60px
+            );
+            animation: wave 3s ease-in-out infinite;
+        }
+
+        .balloons {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .balloons.active {
+            opacity: 1;
+        }
+
+        .balloon {
+            position: absolute;
+            width: 60px;
+            height: 80px;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .balloon::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 40px;
+            background: #333;
+        }
+
+        .gifts {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .gifts.active {
+            opacity: 1;
+            animation: slideInUp 1s ease;
+        }
+
+        .gift {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            border-radius: 10px;
+            position: relative;
+            animation: wiggle 2s ease-in-out infinite;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .gift:hover {
+            transform: scale(1.1);
+        }
+
+        .gift::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background: gold;
+            transform: translateY(-50%);
+        }
+
+        .gift::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 10px;
+            background: gold;
+            transform: translateX(-50%);
+        }
+
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .photo-gallery.active {
+            opacity: 1;
+            animation: slideInUp 1s ease;
+        }
+
+        .photo-gallery.fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            margin: 0;
+            padding: 0;
+        }
+
+        .photo-frame {
+            width: 100%;
+            height: 150px;
+            border: 5px solid #fff;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            transform: rotate(0deg);
+            transition: all 0.3s ease;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .photo-frame.fullscreen {
+            width: 80vw;
+            height: 80vh;
+            max-width: 1200px;
+            max-height: 800px;
+            position: absolute;
+            transform: none;
+        }
+
+        .photo-frame.hidden {
+            display: none;
+        }
+
+        .photo-frame:nth-child(odd) {
+            transform: rotate(2deg);
+        }
+
+        .photo-frame:nth-child(even) {
+            transform: rotate(-2deg);
+        }
+
+        .photo-frame:hover {
+            transform: rotate(0deg) scale(1.05);
+            z-index: 10;
+        }
+
+        .photo-frame img {
+            width: 50%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-frame video {
+            width: 50%;    /* 80% de la taille du cadre */
+            height: 100%;   /* 80% de la taille du cadre */
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        
+        
+        
+
+        .exit-fullscreen {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1100;
+            display: none;
+        }
+
+        .exit-fullscreen.visible {
+            display: block;
+        }
+
+        .cake-container {
+            margin: 40px 0;
+            opacity: 0;
+            transition: opacity 1s ease;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 60vh;
+        }
+
+        .cake-container.active {
+            opacity: 1;
+            animation: slideInUp 1s ease;
+        }
+
+        .cake {
+            width: 400px;
+            height: 240px;
+            background: linear-gradient(to bottom, #8B4513, #A0522D);
+            border-radius: 20px 20px 0 0;
+            margin: 0 auto;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .cake-top {
+            width: 370px;
+            height: 60px;
+            background: linear-gradient(to bottom, #FFFDD0, #FFFACD);
+            border-radius: 15px;
+            position: absolute;
+            top: -30px;
+            left: 15px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        .cake-deco {
+            width: 100%;
+            height: 30px;
+            background: repeating-linear-gradient(
+                45deg,
+                #FF69B4,
+                #FF69B4 10px,
+                #FFB6C1 10px,
+                #FFB6C1 20px
+            );
+            position: absolute;
+            top: 30px;
+        }
+
+        .age-number {
+            position: absolute;
+            top: -120px;
+            left: 50%;
+            transform: translateX(-50%) perspective(800px) rotateY(25deg);
+            font-size: 8rem;
+            font-weight: bold;
+            color: #ff6b6b;
+            text-shadow: 4px 4px 8px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.8), 
+                         8px 8px 16px rgba(0,0,0,0.3);
+            animation: bounce 2s infinite;
+            z-index: 10;
+        }
+
+        .birthday-text {
+            position: absolute;
+            top: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            color: #FFD700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: heartbeat 2s ease infinite;
+            width: 100%;
+            text-align: center;
+        }
+
+        .candles {
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+        }
+
+        .candle {
+            width: 15px;
+            height: 45px;
+            background: linear-gradient(to bottom, #F5F5F5, #DCDCDC);
+            border-radius: 6px;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .flame {
+            width: 9px;
+            height: 15px;
+            background: radial-gradient(circle, #FFA500, #FF4500);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            position: absolute;
+            top: -15px;
+            left: 3px;
+            animation: flicker 0.5s ease-in-out infinite alternate;
+        }
+
+        .flame.blown {
+            display: none;
+        }
+
+        .message {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            padding: 30px;
+            border-radius: 20px;
+            margin: 20px auto;
+            max-width: 500px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: opacity 1s ease;
+            font-size: 1.3rem;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 60vh;
+        }
+
+        .message.active {
+            opacity: 1;
+            animation: heartbeat 2s ease infinite;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ff6b6b;
+            animation: confetti-fall 3s linear infinite;
+        }
+
+        @keyframes flicker {
+            0% { transform: scale(1) rotate(-1deg); }
+            100% { transform: scale(1.1) rotate(1deg); }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0) perspective(800px) rotateY(25deg); }
+            40% { transform: translateY(-30px) perspective(800px) rotateY(25deg); }
+            60% { transform: translateY(-15px) perspective(800px) rotateY(25deg); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes wave {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            75% { transform: rotate(-5deg); }
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .audio-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .audio-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            .step-button {
+                padding: 12px 20px;
+                font-size: 1rem;
+                margin: 5px;
+            }
+            
+            .gifts {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+            
+            .gift {
+                width: 60px;
+                height: 60px;
+            }
+
+            .cake {
+                width: 300px;
+                height: 180px;
+            }
+
+            .cake-top {
+                width: 270px;
+            }
+
+            .age-number {
+                font-size: 6rem;
+            }
+
+            .birthday-text {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h5>apres les photos , appuie sur les boutonts et vas en bas</h5>
+    <div class="audio-controls">
+        <button class="audio-button" onclick="toggleAudio()">🎵</button>
+    </div>
+
+    <audio id="birthdayAudio" loop>
+        <source src="/son/music.mp3" type="audio/mp3">
+    </audio>
+    <audio id="photoAudio" loop>
+        <source src="/son/Happy Birthday.mp3" type="audio/mp3">
+    </audio>
+    <audio id="cakeAudio" loop>
+        <source src="/son/🎉 Happy Birthday Song Remix 2025 🎧 _ Fun & Upbeat Birthday Party Music 🎂🎈.mp3" type="audio/mp3">
+    </audio>
+
+    <div class="lights" id="lights"></div>
+    <div class="decorations" id="decorations">
+        <div class="streamer" style="top: 10%;"></div>
+        <div class="streamer" style="top: 20%; animation-delay: 0.5s;"></div>
+        <div class="streamer" style="bottom: 10%;"></div>
+    </div>
+    <div class="balloons" id="balloons"></div>
+
+    <div class="container">
+        <h1>🎉 Joyeux Anniversaire BANI Jennifer Iris   ! 🎉 <br> 22 ans deja  </h1>
+        
+        <button class="step-button visible" onclick="turnOnLights()">
+            💡 Allumer les Lumières
+        </button>
+        
+        <button class="step-button" onclick="addDecorations()" id="decorateBtn">
+            🎊 Faire la Décoration
+        </button>
+        
+        <button class="step-button" onclick="addBalloons()" id="balloonsBtn">
+            🎈 Ajouter les Ballons
+        </button>
+        
+        <button class="step-button" onclick="showGifts()" id="giftsBtn">
+            🎁 Apporter les Cadeaux
+        </button>
+        
+        <button class="step-button" onclick="showPhotos()" id="photosBtn">
+            📸 Voir les Photos Souvenirs
+        </button>
+        
+        <button class="step-button" onclick="showCake()" id="cakeBtn">
+            🎂 Apporter le Gâteau
+        </button>
+        
+        <button class="step-button" onclick="blowCandles()" id="blowBtn">
+            💨 Souffler les Bougies
+        </button>
+        
+        <button class="step-button" onclick="showMessage()" id="messageBtn">
+            💌 Message Final
+        </button>
+
+        <button class="exit-fullscreen" onclick="safeExitFullscreen()" id="exitFullscreenBtn">
+            Quitter le mode plein écran
+        </button>
+
+        <div class="photo-gallery" id="photoGallery">
+            <div class="photo-frame">
+                <video autoplay muted loop>
+                    <source src="/images/17.mp4" type="video/mp4">
+                    <source src="/images/17.mp4" type="video/webm">
+                    Video 23
+                </video>
+            </div>
+            <div class="photo-frame"><img src="/images/IMG-20240302-WA0013.jpg" alt="Souvenir 1" onerror="this.parentElement.innerHTML='Photo 1'"></div>
+            <div class="photo-frame"><img src="/images/IMG-20240303-WA0009.jpg" alt="Souvenir 2" onerror="this.parentElement.innerHTML='Photo 2'"></div>
+            <div class="photo-frame"><img src="/images/IMG_20220705_134845_776.jpg" alt="Souvenir 3" onerror="this.parentElement.innerHTML='Photo 3'"></div>
+            <div class="photo-frame"><img src="/images/photo_2025-05-27_00-03-17.jpg" alt="Souvenir 4" onerror="this.parentElement.innerHTML='Photo 4'"></div>
+            <div class="photo-frame"><img src="/images/5.jpg" alt="Souvenir 5" onerror="this.parentElement.innerHTML='Photo 5'"></div>
+            <div class="photo-frame"><img src="/images/6.jpg" alt="Souvenir 6" onerror="this.parentElement.innerHTML='Photo 6'"></div>
+            <div class="photo-frame"><img src="/images/7.jpg" alt="Souvenir 7" onerror="this.parentElement.innerHTML='Photo 7'"></div>
+            <div class="photo-frame"><img src="/images/8.jpg" alt="Souvenir 8" onerror="this.parentElement.innerHTML='Photo 8'"></div>
+            <div class="photo-frame"><img src="/images/9.jpg" alt="Souvenir 9" onerror="this.parentElement.innerHTML='Photo 9'"></div>
+            <div class="photo-frame"><img src="/images/10.jpg" alt="Souvenir 10" onerror="this.parentElement.innerHTML='Photo 10'"></div>
+            <div class="photo-frame"><img src="/images/11.jpg" alt="Souvenir 11" onerror="this.parentElement.innerHTML='Photo 11'"></div>
+            <div class="photo-frame"><img src="/images/12.jpg" alt="Souvenir 12" onerror="this.parentElement.innerHTML='Photo 12'"></div>
+            <div class="photo-frame"><img src="/images/13.jpg" alt="Souvenir 13" onerror="this.parentElement.innerHTML='Photo 13'"></div>
+            <div class="photo-frame"><img src="/images/14.jpeg" alt="Souvenir 14" onerror="this.parentElement.innerHTML='Photo 14'"></div>
+            <div class="photo-frame"><img src="/images/15.jpeg" alt="Souvenir 15" onerror="this.parentElement.innerHTML='Photo 15'"></div>
+            <div class="photo-frame"><img src="/images/16.jpeg" alt="Souvenir 16" onerror="this.parentElement.innerHTML='Photo 16'"></div>
+            <div class="photo-frame"><img src="/images/17.jpg" alt="Souvenir 17" onerror="this.parentElement.innerHTML='Photo 17'"></div>
+            <div class="photo-frame"><img src="/images/21.jpg" alt="Souvenir 18" onerror="this.parentElement.innerHTML='Photo 18'"></div>
+            <div class="photo-frame">
+                <video autoplay muted loop>
+                    <source src="/images/IMG_3404.MP4" type="video/mp4">
+                    <source src="/images/IMG_3404.MP4" type="video/webm">
+                    Video 23
+                </video>
+            </div>
+            <div class="photo-frame"><img src="/images/22.jpg" alt="Souvenir 19" onerror="this.parentElement.innerHTML='Photo 19'"></div>
+            <div class="photo-frame"><img src="/images/23.jpg" alt="Souvenir 20" onerror="this.parentElement.innerHTML='Photo 20'"></div>
+            <div class="photo-frame"><img src="/images/24.jpg" alt="Souvenir 21" onerror="this.parentElement.innerHTML='Photo 21'"></div>
+            <div class="photo-frame"><img src="/images/25.jpg" alt="Souvenir 22" onerror="this.parentElement.innerHTML='Photo 22'"></div>
+            <div class="photo-frame"><img src="/images/26.jpg" alt="Souvenir 14" onerror="this.parentElement.innerHTML='Photo 14'"></div>
+            <div class="photo-frame"><img src="/images/27.jpg" alt="Souvenir 15" onerror="this.parentElement.innerHTML='Photo 15'"></div>
+            <div class="photo-frame"><img src="/images/28.jpg" alt="Souvenir 16" onerror="this.parentElement.innerHTML='Photo 16'"></div>
+            <div class="photo-frame"><img src="/images/29.jpg" alt="Souvenir 17" onerror="this.parentElement.innerHTML='Photo 17'"></div>
+            <div class="photo-frame"><img src="/images/211.jpg" alt="Souvenir 18" onerror="this.parentElement.innerHTML='Photo 18'"></div>
+            
+            <div class="photo-frame">
+                <video autoplay muted loop>
+                    <source src="/images/17.mp4" type="video/mp4">
+                    <source src="/images/17.mp4" type="video/webm">
+                    Video 23
+                </video>
+            </div>
+            
+            <div class="photo-frame">
+                <video autoplay muted loop>
+                    <source src="/videos/video24.mp4" type="video/mp4">
+                    <source src="/videos/video24.webm" type="video/webm">
+                    Video 24
+                </video>
+            </div>
+        </div>
+
+        <div class="cake-container" id="cakeContainer">
+            <div class="cake">
+                <div class="cake-top"></div>
+                <div class="cake-deco"></div>
+                <div class="age-number" id="ageNumber">22</div>
+                <div class="birthday-text">Joyeux Anniversaire pour tes 22 ans !</div>
+                <div class="candles" id="candles">
+                    <div class="candle"><div class="flame"></div></div>
+                    <div class="candle"><div class="flame"></div></div>
+                    <div class="candle"><div class="flame"></div></div>
+                    <div class="candle"><div class="flame"></div></div>
+                    <div class="candle"><div class="flame"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="gifts" id="gifts">
+            <div class="gift" style="background: linear-gradient(45deg, #ff6b6b, #ff8e8e);"></div>
+            <div class="gift" style="background: linear-gradient(45deg, #feca57, #ffd93d);"></div>
+            <div class="gift" style="background: linear-gradient(45deg, #48dbfb, #0abde3);"></div>
+            <div class="gift" style="background: linear-gradient(45deg, #ff9ff3, #f368e0);"></div>
+        </div>
+
+        <div class="message" id="message">
+            <h2>🎂 Un message spécial pour toi ! 🎂</h2>
+            <p>
+                En cette journée si spéciale, je voulais prendre un moment pour te dire à quel point tu comptes pour moi. 
+                Ton sourire illumine chaque journée, ta gentillesse touche tous ceux qui t'entourent, et ton amitié est un véritable cadeau.
+                <strong>j'ai trouver ca sur internet . Juste pour te dire que meme si on ne se parle plus trop comme avant je ne t'ai jamais remplacer par quelqu'un dautres et que ca marrive de aussi de  penser a toi  </strong>
+            </p>
+            <p>
+                pour un cadeau je n'ai pas pu te faire un cadeau physique mais j'ai essayer de faire quelque chose de special pour toi . c'est peut etre pas grand choses comme tu recois chaque annees mais c'est ma facon a moi de te prouver ton importance pour moi meme si c'est muet pour le moment
+            </p>
+            <p>
+                Que cette nouvelle année de ta vie soit remplie de joie, de rires, d'aventures extraordinaires et de tous tes rêves qui se réalisent !
+            </p>
+            <p>
+                <strong>🌟 Joyeux Anniversaire JeNni💗💓 ! 🌟</strong>
+            </p>
+            <p>desoler pour les photos mais cest tout ce que j'ai pu trouver ca.</p>
+            <p>
+                desoler pour le retard 😃😀😃. jespere que tu ne vas pas te facher. Bonne journée pour demain , surement que tu as prevue quelque chose
+            </p>
+
+            <p>desoler pour les photos mais cest tout ce que j'ai pu trouver ca.</p>
+
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 0;
+        let audioPlaying = false;
+        let currentAudio = 'birthday';
+        let slideshowInterval;
+
+        function createLights() {
+            const lightsContainer = document.getElementById('lights');
+            const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#6c5ce7', '#00b894'];
+            
+            for (let i = 0; i < 20; i++) {
+                const light = document.createElement('div');
+                light.className = 'light';
+                light.style.left = Math.random() * 100 + '%';
+                light.style.top = Math.random() * 100 + '%';
+                light.style.background = colors[Math.floor(Math.random() * colors.length)];
+                light.style.animationDelay = Math.random() * 2 + 's';
+                lightsContainer.appendChild(light);
+            }
+        }
+
+        function createBalloons() {
+            const balloonsContainer = document.getElementById('balloons');
+            const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#6c5ce7'];
+            
+            for (let i = 0; i < 15; i++) {
+                const balloon = document.createElement('div');
+                balloon.className = 'balloon';
+                balloon.style.left = Math.random() * 90 + '%';
+                balloon.style.top = Math.random() * 60 + '%';
+                balloon.style.background = colors[Math.floor(Math.random() * colors.length)];
+                balloon.style.animationDelay = Math.random() * 3 + 's';
+                balloonsContainer.appendChild(balloon);
+            }
+        }
+
+        function createConfetti() {
+            const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#6c5ce7'];
+            
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = Math.random() * 3 + 's';
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 3000);
+                }, i * 100);
+            }
+        }
+
+        function switchAudio(audioId) {
+            const audios = ['birthdayAudio', 'photoAudio', 'cakeAudio'];
+            audios.forEach(id => {
+                const audio = document.getElementById(id);
+                if (id === audioId && audioPlaying) {
+                    audio.play().catch(e => console.log('Audio play prevented:', e));
+                } else {
+                    audio.pause();
+                    audio.currentTime = 0;
+                }
+            });
+            currentAudio = audioId.split('Audio')[0];
+        }
+
+        function toggleAudio() {
+            const audio = document.getElementById(`${currentAudio}Audio`);
+            if (audioPlaying) {
+                audio.pause();
+                audioPlaying = false;
+            } else {
+                audio.play().catch(e => console.log('Audio play prevented:', e));
+                audioPlaying = true;
+            }
+        }
+
+        function startSlideshow() {
+            const photos = document.querySelectorAll('.photo-frame');
+            let currentPhoto = 0;
+
+            photos.forEach(photo => photo.classList.add('hidden'));
+            photos[currentPhoto].classList.remove('hidden');
+            photos[currentPhoto].classList.add('fullscreen');
+
+            slideshowInterval = setInterval(() => {
+                photos[currentPhoto].classList.add('hidden');
+                photos[currentPhoto].classList.remove('fullscreen');
+                currentPhoto = (currentPhoto + 1) % photos.length;
+                photos[currentPhoto].classList.remove('hidden');
+                photos[currentPhoto].classList.add('fullscreen');
+            }, 5000);
+        }
+
+        function stopSlideshow() {
+            clearInterval(slideshowInterval);
+            const photos = document.querySelectorAll('.photo-frame');
+            photos.forEach(photo => {
+                photo.classList.remove('hidden', 'fullscreen');
+            });
+        }
+
+        function enterFullscreen() {
+            const gallery = document.getElementById('photoGallery');
+            document.body.classList.add('fullscreen');
+            gallery.classList.add('fullscreen');
+            document.getElementById('exitFullscreenBtn').classList.add('visible');
+            switchAudio('photoAudio');
+            startSlideshow();
+        }
+
+        // Version simplifiée - mode plein écran personnalisé seulement
+        // Fonction exitFullscreen corrigée
+        function exitFullscreen() {
+            console.log('Sortie du mode plein écran');
+            
+            const gallery = document.getElementById('photoGallery');
+            
+            // Arrêter le slideshow
+            stopSlideshow();
+            
+            // Supprimer les classes CSS personnalisées
+            document.body.classList.remove('fullscreen');
+            gallery.classList.remove('fullscreen');
+            document.getElementById('exitFullscreenBtn').classList.remove('visible');
+            
+            // Changer l'audio et afficher les éléments suivants
+            switchAudio('birthdayAudio');
+            document.getElementById('photoGallery').classList.add('active');
+            showNextButton('cakeBtn');
+        }
+        
+        // Gestionnaire global pour capturer l'erreur fullscreen
+        window.addEventListener('unhandledrejection', function(event) {
+            if (event.reason && 
+                (event.reason.message.includes('Not in fullscreen mode') || 
+                 event.reason.message.includes('fullscreen'))) {
+                console.log('Erreur fullscreen interceptée et ignorée');
+                event.preventDefault();
+            }
+        });
+
+        function turnOnLights() {
+            document.body.classList.add('lit');
+            document.getElementById('lights').classList.add('active');
+            hideCurrentButton(event.target);
+            showNextButton('decorateBtn');
+            createConfetti();
+            playAudio();
+        }
+
+        function addDecorations() {
+            document.getElementById('decorations').classList.add('active');
+            hideCurrentButton(event.target);
+            showNextButton('balloonsBtn');
+            createConfetti();
+        }
+
+        function addBalloons() {
+            document.getElementById('balloons').classList.add('active');
+            hideCurrentButton(event.target);
+            showNextButton('giftsBtn');
+            createConfetti();
+        }
+
+        function showGifts() {
+            document.getElementById('gifts').classList.add('active');
+            hideCurrentButton(event.target);
+            showNextButton('photosBtn');
+            createConfetti();
+        }
+
+        function showPhotos() {
+            document.getElementById('photoGallery').classList.add('active');
+            hideCurrentButton(event.target);
+            enterFullscreen();
+        }
+
+        function showCake() {
+            document.getElementById('photoGallery').classList.remove('active');
+            document.getElementById('cakeContainer').classList.add('active');
+            hideCurrentButton(event.target);
+            showNextButton('blowBtn');
+            createConfetti();
+            switchAudio('cakeAudio');
+        }
+
+        function blowCandles() {
+            const flames = document.querySelectorAll('.flame');
+            flames.forEach((flame, index) => {
+                setTimeout(() => {
+                    flame.classList.add('blown');
+                }, index * 200);
+            });
+            hideCurrentButton(event.target);
+            showNextButton('messageBtn');
+            createConfetti();
+            setTimeout(() => {
+                alert('🎉 Félicitations ! Tous tes vœux vont se réaliser ! 🎉');
+            }, 1000);
+        }
+
+        function safeExitFullscreen() {
+            try {
+                exitFullscreen();
+            } catch (error) {
+                console.log('Erreur capturée:', error);
+            }
+            
+            // S'assurer que l'action principale se fait même en cas d'erreur
+            setTimeout(() => {
+                switchAudio('birthdayAudio');
+                document.getElementById('photoGallery').classList.add('active');
+                showNextButton('cakeBtn');
+            }, 100);
+        }
+
+        function showMessage() {
+            document.getElementById('cakeContainer').classList.remove('active');
+            document.getElementById('gifts').classList.remove('active');
+            document.getElementById('balloons').classList.remove('active');
+            document.getElementById('decorations').classList.remove('active');
+            document.getElementById('lights').classList.remove('active');
+            document.body.classList.remove('lit');
+            document.getElementById('message').classList.add('active');
+            hideCurrentButton(event.target);
+            createConfetti();
+            setTimeout(() => createConfetti(), 1000);
+            setTimeout(() => createConfetti(), 2000);
+        }
+
+        function hideCurrentButton(button) {
+            button.classList.add('hidden');
+        }
+
+        function showNextButton(buttonId) {
+            document.getElementById(buttonId).classList.add('visible');
+        }
+
+        function playAudio() {
+            switchAudio('birthdayAudio');
+            audioPlaying = true;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            createLights();
+            createBalloons();
+            setTimeout(() => {
+                document.querySelector('h1').style.opacity = '1';
+            }, 500);
+        });
+
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('gift')) {
+                createConfetti();
+                e.target.style.transform = 'scale(1.3) rotate(360deg)';
+                setTimeout(() => {
+                    e.target.style.transform = 'scale(1)';
+                }, 500);
+            }
+        });
+    </script>
+</body>
+</html>
